@@ -19,6 +19,7 @@ function Dashboard({ user, onLogout }) {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-2">Welcome back, {name} </h1>
         <p className="text-gray-400 mb-10">Your TrackIt dashboard.</p>
+        <p>just change</p>
 
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
