@@ -1,14 +1,10 @@
-function Dashboard({ user, setPage }) {
-  const handleLogout = () => {
-    setPage('login')
-  }
-
+function Dashboard({ user, onLogout }) {
   return (
     <div>
       <h1>Dashboard</h1>
-      <p>Welcome, {user.name}</p>
+      <p>Welcome, {user.user_metadata?.name}</p>
       <p>{user.email}</p>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={onLogout}>Logout</button>
     </div>
   )
 }

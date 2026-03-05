@@ -1,35 +1,58 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Login from './pages/Login'
+import { supabase } from './supabase'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 
-const users = []
 
 function App() {
   const [page, setPage] = useState('login')
   const [user, setUser] = useState(null)
 
-  const handleSignup = (name, email, password) => {
-    const existing = users.find(u => u.email === email)
-    if (existing) return { ok: false, message: 'Email already registered' }
-    const newUser = { name, email, password }
-    users.push(newUser)
-    setUser(newUser)
+
+
+    useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setUser(session.user)
+        setPage('dashboard')
+      }
+    })
+  }, [])
+
+  const handleSignup = async (name, email, password) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } }
+    })
+    if (error) return { ok: false, message: error.message }
+    setUser(data.user)
     setPage('dashboard')
     return { ok: true }
   }
 
-  const handleLogin = (email, password) => {
-    const found = users.find(u => u.email === email && u.password === password)
-    if (!found) return { ok: false, message: 'Invalid email or password' }
-    setUser(found)
+ 
+  const handleLogin = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+    if (error) return { ok: false, message: error.message }
+    setUser(data.user)
     setPage('dashboard')
     return { ok: true }
+  }
+ 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+    setPage('login')
   }
 
   if (page === 'login') return <Login setPage={setPage} onLogin={handleLogin} />
   if (page === 'signup') return <Signup setPage={setPage} onSignup={handleSignup} />
-  if (page === 'dashboard') return <Dashboard setPage={setPage} user={user} />
+  if (page === 'dashboard') return <Dashboard setPage={setPage} user={user}  onLogout={handleLogout} />
 }
 
 export default App
