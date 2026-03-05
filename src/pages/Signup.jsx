@@ -1,73 +1,112 @@
 import { useState } from 'react'
 
 function Signup({ setPage, onSignup }) {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPass, setConfirmPass] = useState('')
-    const [errors, setErrors] = useState({})
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPass, setConfirmPass] = useState('')
+  const [errors, setErrors] = useState({})
 
-    const validate = () => {
+  const validate = () => {
     const e = {}
     if (!name) e.name = 'Name is required'
     if (!email) e.email = 'Email is required'
     if (!password) e.password = 'Password is required'
-    if (!confirmPass) e.confirmPass = 'confirm password is required'
-    if( password !== confirmPass) e.invalidpass ='password and configm not same'
-    if (password.length < 6) e.password = 'Password must be at least 6 characters'
+    else if (password.length < 6) e.password = 'Min. 6 characters'
+    if (password !== confirmPass) e.confirmPass = 'Passwords do not match'
     return e
   }
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     const e = validate()
     setErrors(e)
     if (Object.keys(e).length > 0) return
-    const result = onSignup(name, email, password)
+    const result = await onSignup(name, email, password)
     if (!result.ok) setErrors({ api: result.message })
   }
-  
-
 
   return (
-     <div>
-      <h1>Signup</h1>
-        {errors.api && <p>{errors.api}</p>}
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl p-8">
 
-     <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      {errors.name && <p>{errors.name}</p>}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-white">TrackIt</h1>
+          <p className="text-gray-400 mt-2 text-sm">Create your account</p>
+        </div>
 
+        {errors.api && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            {errors.api}
+          </div>
+        )}
 
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="John Doe"
+              className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+            {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+          </div>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      {errors.email && <p>{errors.email}</p>}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+            {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+          </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {errors.password && <p>{errors.password}</p>}
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min. 6 characters"
+              className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+            {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+          </div>
 
-       <input
-        type="password"
-        placeholder="confirm Password"
-        value={confirmPass}
-        onChange={(e) => setConfirmPass(e.target.value)}
-      />
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPass}
+              onChange={(e) => setConfirmPass(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+            {errors.confirmPass && <p className="text-red-400 text-xs mt-1">{errors.confirmPass}</p>}
+          </div>
 
-      <button onClick={handleSignup}>Sign in</button>
-      <p> account? <button onClick={() => setPage('login')}>Sign In</button></p>
+          <button
+            onClick={handleSignup}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors mt-2"
+          >
+            Create account
+          </button>
+        </div>
+
+        <p className="text-center text-gray-500 text-sm mt-6">
+          Already have an account?{' '}
+          <button
+            onClick={() => setPage('login')}
+            className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+          >
+            Sign in
+          </button>
+        </p>
+      </div>
     </div>
   )
 }
